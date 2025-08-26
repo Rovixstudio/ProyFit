@@ -26,7 +26,7 @@ function loadExercises(day){
   let doneCount=0;
   TRAINING[day].forEach(ex=>{
     const key=day+'_'+ex;
-    const checked = weekData[key]=='done';
+    const checked = weekData[key] && weekData[key].done;
     if(checked) doneCount++;
     const div=document.createElement('div');
     div.className='exercise';
@@ -39,11 +39,12 @@ function loadExercises(day){
 
 function toggle(day, ex, btn){
   const key=day+'_'+ex;
-  if(weekData[key]=='done'){
+  const timestamp = new Date();
+  if(weekData[key] && weekData[key].done){
     delete weekData[key];
     btn.textContent='Marcar';
-  }else{
-    weekData[key]='done';
+  } else {
+    weekData[key] = {done:true, date: timestamp.toLocaleString()};
     btn.textContent='✔';
   }
   localStorage.setItem(weekKey, JSON.stringify(weekData));
@@ -59,9 +60,9 @@ function loadReport(){
   const reportArea = document.getElementById('reportArea');
   reportArea.innerHTML='';
   for(const key in weekData){
-    if(weekData[key]=='done'){
+    if(weekData[key].done){
       const [day, exName] = key.split('_');
-      reportArea.innerHTML+=`<div>${day} • ${exName} • ${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}</div>`;
+      reportArea.innerHTML+=`<div>${day} • ${exName} • ${weekData[key].date}</div>`;
     }
   }
 }
